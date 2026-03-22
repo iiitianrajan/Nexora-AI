@@ -1,48 +1,27 @@
-// import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
 
-// const ai = new GoogleGenAI({
-//   apiKey: import.meta.env.VITE_GEMINI_KEY,
-// });
+const ai = new GoogleGenAI({
+  apiKey: import.meta.env.VITE_GEMINI_KEY,
+});
 
-// export const runChat = async (prompt) => {
-//   try {
-//     const result = await ai.models.generateContent({
-//       model: "gemini-1.5-flash",   // final working model
-//       contents: [
-//         {
-//           role: "user",
-//           parts: [{ text: prompt }],
-//         },
-//       ],
-//     });
 
-//     const output = result.candidates[0].content.parts[0].text;
-//     return output;
+  // OFFLINE AI FUNCTION
 
-//   } catch (error) {
-//     console.error("Gemini Error:", error);
-//     return "API not working (quota/billing issue)";
-//   }
-// };
-// OFFLINE AI MODE (SMART VERSION FOR VIVA)
-
-export const runChat = async (prompt) => {
-  await new Promise((resolve) => setTimeout(resolve, 800));
-
+const offlineAI = (prompt) => {
   prompt = prompt.toLowerCase();
 
-  // greetings
+  
   if (prompt.includes("hello") || prompt.includes("hi")) {
     return "Hello 👋 How can I help you today?";
   }
 
   if (prompt.includes("how are you")) {
-    return "I am just a program, but I am working perfectly and ready to help you 😄";
+    return "I am working perfectly and ready to help you 😄";
   }
 
   // intro
   if (prompt.includes("who are you")) {
-    return "I am an AI chatbot created as a Gemini clone project using React and modern web technologies.";
+    return "I am an AI chatbot built using React and Gemini API.";
   }
 
   if (prompt.includes("your name")) {
@@ -50,74 +29,101 @@ export const runChat = async (prompt) => {
   }
 
   // web dev
-  if (prompt.includes("react")) {
-    return "React is a JavaScript library used to build fast and interactive user interfaces. It uses components and virtual DOM to improve performance.";
+  if (prompt.includes("what is react?")) {
+    return "React (often called React) is a JavaScript library used to build user interfaces (UIs)—especially for web applications.It was developed by Meta and is widely used for creating fast, interactive, and dynamic websites.";
   }
 
-  if (prompt.includes("node")) {
-    return "Node.js is a runtime environment that allows JavaScript to run on the server side and build scalable backend applications.";
+  if (prompt.includes("what is node?")) {
+    return "Node.js allows JavaScript to run on the server side.";
   }
 
-  if (prompt.includes("express")) {
-    return "Express.js is a backend framework for Node.js used to create APIs and web servers easily.";
+  if (prompt.includes("what is express?")) {
+    return "Express.js is a backend framework for Node.js used to create APIs.";
   }
 
-  if (prompt.includes("mongodb")) {
-    return "MongoDB is a NoSQL database that stores data in JSON-like format and is widely used with MERN stack.";
+  if (prompt.includes("what is mongodb?")) {
+    return "MongoDB is a NoSQL database that stores data in JSON-like format.";
   }
 
-  if (prompt.includes("mern")) {
-    return "MERN stack stands for MongoDB, Express.js, React.js and Node.js. It is used to build full stack web applications.";
+  if (prompt.includes("what is mern?")) {
+    return "MERN stack stands for MongoDB, Express, React, and Node.js.";
   }
 
   // programming
-  if (prompt.includes("javascript")) {
-    return "JavaScript is a popular programming language used to build web applications, both frontend and backend.";
+  if (prompt.includes("what is javascript?")) {
+    return "JavaScript is used for building web applications.";
   }
 
-  if (prompt.includes("python")) {
-    return "Python is a high-level programming language used in web development, AI, data science and automation.";
+  if (prompt.includes("what is python?")) {
+    return "Python is widely used in AI, data science, and web development.";
   }
 
-  if (prompt.includes("java")) {
-    return "Java is an object-oriented programming language used to build desktop, web and Android applications.";
+  if (prompt.includes("what is java?")) {
+    return "Java is an object-oriented language used for enterprise and Android apps.";
   }
 
   // dsa
-  if (prompt.includes("dsa") || prompt.includes("data structure")) {
-    return "Data Structures and Algorithms help in solving problems efficiently and are very important for coding interviews.";
+  if (prompt.includes("what is dsa?") || prompt.includes("data structure")) {
+    return "Data Structures and Algorithms help solve problems efficiently.";
   }
 
-  if (prompt.includes("array")) {
-    return "Array is a linear data structure used to store multiple elements in a single variable.";
+  if (prompt.includes("what is array?")) {
+    return "Array is a collection of elements stored in contiguous memory.";
   }
 
-  if (prompt.includes("stack")) {
-    return "Stack is a linear data structure that follows LIFO (Last In First Out) principle.";
+  if (prompt.includes("what is stack?")) {
+    return "Stack follows LIFO (Last In First Out).";
   }
 
-  if (prompt.includes("queue")) {
-    return "Queue is a linear data structure that follows FIFO (First In First Out) principle.";
+  if (prompt.includes("what is queue?")) {
+    return "Queue follows FIFO (First In First Out).";
   }
 
   // AI
-  if (prompt.includes("ai")) {
-    return "Artificial Intelligence is the simulation of human intelligence in machines that can think and learn.";
+  if (prompt.includes("what is ai?")) {
+    return "Artificial Intelligence simulates human intelligence in machines.";
   }
 
   if (prompt.includes("machine learning")) {
-    return "Machine Learning is a subset of AI that allows systems to learn from data and improve automatically.";
+    return "Machine Learning allows systems to learn from data.";
   }
 
   // project
   if (prompt.includes("project")) {
-    return "This project is a Gemini AI clone built using React. It simulates AI responses and demonstrates chatbot functionality.";
+    return "This is a Gemini AI Clone built using React with an offline fallback system.";
   }
 
   if (prompt.includes("college")) {
-    return "I am developed as a college project to demonstrate AI chatbot functionality using modern web technologies.";
+    return "This project demonstrates AI chatbot functionality for academic purposes.";
   }
 
-  // default smart reply
-  return "This is a smart AI response generated by the Gemini Clone project. It can answer basic programming, web development and AI related questions.";
+ 
+  return "⚠️ API limit reached. Switched to offline AI mode.";
+};
+
+
+export const runChat = async (prompt) => {
+  try {
+    const result = await ai.models.generateContent({
+      model: "gemini-1.5-flash",
+      contents: [
+        {
+          role: "user",
+          parts: [{ text: prompt }],
+        },
+      ],
+    });
+
+    const text =
+      result?.candidates?.[0]?.content?.parts?.[0]?.text ||
+      "No response from AI.";
+
+    return text;
+
+  } catch (error) {
+    console.error("Gemini Error:", error);
+
+    // fallback
+    return offlineAI(prompt);
+  }
 };
